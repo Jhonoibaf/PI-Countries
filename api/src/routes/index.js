@@ -33,18 +33,16 @@ const getCountries = async () => {
   const dbCountriesInf = await Country.findAll(
     {include:{
       model: Activity,
-      atributes: ['activity'],
+      atributes: ['name'],
       through:{
           atributes: [],
       }
     }}
   )
   
-  console.log(dbCountriesInf)
   if (dbCountriesInf && dbCountriesInf.length > 0) return dbCountriesInf
 
   const countries = await getApiInf();
-  console.log(countries)
   for (el of countries){
     if (!el) continue
     await Country.findOrCreate({
@@ -63,10 +61,59 @@ const getCountries = async () => {
   return countries
 }
 
-router.get('/countries', async (req, res) => {
+
+router.get('/countries', async (req, res, next) => {
+  if(req.query.name){
+    next()
+  }
   const allCountries = await getCountries();
   res.send(allCountries)
 })
+
+router.get('/countries/:id', async(req, res) => {
+  const { id } = req.params
+  const countries = await getCountries()
+  const country = countries.find( el => el.id === id.toString())
+  if(country){
+    res.status(200).send(country)
+  } else {
+    res.status(400).send('Country dont exist')
+  }
+})
+
+router.get('/countries', async(req, res) => {
+  const {name} = req.query
+  console.log(name);
+  const countries = await getCountries()
+  console.log('estos son todos los paises ' + countries);
+  let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
+  console.log(country);
+  if (country){
+    res.status(200).send(country.dataValues)
+  }  else {
+    res.status(400).send('Country dont exist')
+  }
+})
+
+router.post('/activities', async(req, res) => {
+  const {activity, difficulty, time, season, countries} = req.body;
+  const currentActivity = await Activity.create({
+    name: activity,
+    difficulty: difficulty,
+    time: time,
+    season: season
+  });
+  
+  for(country of countries){
+    const countryDB = Country.findAll({
+      where : {name:country}
+    });
+    currentActivity.addCountry(countryDB)
+  }
+  res.send('Activity has created')
+});
+
+
 
 
 
