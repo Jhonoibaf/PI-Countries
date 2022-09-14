@@ -62,12 +62,20 @@ const getCountries = async () => {
 }
 
 
-router.get('/countries', async (req, res, next) => {
+router.get('/countries', async (req, res ) => {
   if(req.query.name){
-    next()
+    const {name} = req.query
+    const countries = await getCountries()
+    let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
+    if (country){
+      res.status(200).send([country.dataValues])
+    }else{
+      res.status(400).send('Country dont exist')
+    }
+  }else{
+    const allCountries = await getCountries();
+    res.send(allCountries)
   }
-  const allCountries = await getCountries();
-  res.send(allCountries)
 })
 
 router.get('/countries/:id', async(req, res) => {
@@ -81,21 +89,8 @@ router.get('/countries/:id', async(req, res) => {
   }
 })
 
-router.get('/countries', async(req, res) => {
-  const {name} = req.query
-  console.log(name);
-  const countries = await getCountries()
-  console.log('estos son todos los paises ' + countries);
-  let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
-  console.log(country);
-  if (country){
-    res.status(200).send(country.dataValues)
-  }  else {
-    res.status(400).send('Country dont exist')
-  }
-})
 
-router.post('/activities', async(req, res) => {
+router.post('/activities', async (req, res) => {
   const {activity, difficulty, time, season, countries} = req.body;
   const currentActivity = await Activity.create({
     name: activity,
@@ -105,7 +100,8 @@ router.post('/activities', async(req, res) => {
   });
   
   for(country of countries){
-    const countryDB = Country.findAll({
+    console.log(country);
+    let countryDB = await Country.findAll({
       where : {name:country}
     });
     currentActivity.addCountry(countryDB)
