@@ -1,6 +1,9 @@
 const { Router } = require('express');
 const  axios  =  require ( 'axios' );
 const {Country , Activity} = require ('../db')
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
 
@@ -26,8 +29,6 @@ const getApiInf = async()=> {
   })
   return apiData
 }
-
-
 
 const getCountries = async () => {
   const dbCountriesInf = await Country.findAll(
@@ -61,59 +62,89 @@ const getCountries = async () => {
   return countries
 }
 
+const getActivities = async () => {
+  const dbActivities= await Activity.findAll(
+  {include:{
+    model: Country,
+    atributes: ['name'],
+    through:{
+        atributes: [],
+    }
+  }}
+  )
+  return dbActivities
+}
 
 router.get('/countries', async (req, res ) => {
-  if(req.query.name){
-    const {name} = req.query
-    const countries = await getCountries()
-    let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
-    if (country){
-      res.status(200).send([country.dataValues])
-    }else{
-      res.status(400).send('Country dont exist')
-    }
-  }else{
-    const allCountries = await getCountries();
-    res.send(allCountries)
+  try {
+    if(req.query.name){
+      const {name} = req.query
+      const countries = await getCountries()
+      let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
+      
+      if (!country) res.status(400).send('Country dont exist')
+        res.status(200).send([country.dataValues])
+      }else{
+      const allCountries = await getCountries();
+      res.send(allCountries)
+  }
+} catch{
+    res.status(400).send('No se encontraron los paises')
   }
 })
 
 router.get('/countries/:id', async(req, res) => {
-  const { id } = req.params
-  const countries = await getCountries()
-  const country = countries.find( el => el.id === id.toString())
-  if(country){
-    res.status(200).send(country)
-  } else {
-    res.status(400).send('Country dont exist')
+  try{
+    const { id } = req.params
+    const countries = await getCountries()
+
+    if(!countries) res.status(400).send('cant get countries information to ID reques')
+
+    const country = countries.find( el => el.id === id.toString())
+
+    if(!country) res.status(400).send('Country dont exist')
+      res.status(200).send(country)
+
+  }catch(error){
+    console.error(error)
   }
 })
 
 
 router.post('/activities', async (req, res) => {
-  const {activity, difficulty, time, season, countries} = req.body;
-  const currentActivity = await Activity.create({
-    name: activity,
-    difficulty: difficulty,
-    time: time,
-    season: season
-  });
-  
-  for(country of countries){
-    console.log(country);
-    let countryDB = await Country.findAll({
-      where : {name:country}
+  try {  
+    const {activity, difficulty, time, season, countries} = req.body;
+    const currentActivity = await Activity.create({
+      name: activity,
+      difficulty: difficulty,
+      time: time,
+      season: season
     });
-    currentActivity.addCountry(countryDB)
+    
+    console.log(countries);
+
+    for(const country of countries){
+      console.log(country)
+      let countryDB = await Country.findAll({
+      where : {name:{[Op.like]:`%${country}%`}}
+      });
+      currentActivity.addCountry(countryDB)
+    }
+    res.send('Activity has created')
+  } catch{
+    res.status(400).send('no se pudo crear la actividad')
   }
-  res.send('Activity has created')
 });
 
-
-
-
-
-
+router.get('/activities', async(req, res) => {
+  try{
+    const activities = await getActivities();
+    if(!activities) res.status(400).send('there aren´t activities')
+      res.status(200).send(activities)
+  }catch(error){
+    res.status(400).send(error.message)
+  }
+});
 
 
 
