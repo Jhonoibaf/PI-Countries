@@ -106,7 +106,7 @@ router.get('/countries/:id', async(req, res) => {
       res.status(200).send(country)
 
   }catch(error){
-    console.error(error)
+    res.status(400).send(error.message)
   }
 })
 
