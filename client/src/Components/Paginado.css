@@ -1,0 +1,13 @@
+ul{
+    list-style-type: none;
+    overflow-x: auto;
+}
+li{
+    cursor: pointer;
+    display: inline;
+    margin-right: 5px;
+    padding:5px 10px;
+	color:#fff;
+	background:#024959;
+	text-decoration: none;
+}
