@@ -80,13 +80,20 @@ router.get('/countries', async (req, res ) => {
     if(req.query.name){
       const {name} = req.query
       const countries = await getCountries()
-      let country = countries.find( el => el.name.toLowerCase().includes(name.toLowerCase()))
+      let country = countries.filter( el => el.name.toLowerCase().includes(name.toLowerCase()))
       
       if (!country) res.status(400).send('Country dont exist')
-        res.status(200).send([country.dataValues])
-      }else{
-      const allCountries = await getCountries();
-      res.send(allCountries)
+        res.status(200).send(country)
+    }else if(req.query.continents){
+      const {continents} = req.query
+      const countries = await getCountries();
+      let country = countries.filter(el => el.continents.toLowerCase().includes(continents.toLowerCase()))
+      
+      if (!country) res.status(400).send('Continent dont exist')
+        res.status(200).send(country)
+    }else{
+    const allCountries = await getCountries();
+    res.send(allCountries)
   }
 } catch{
     res.status(400).send('No se encontraron los paises')
