@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom'
 import {
   getCountries,
   getActivities,
@@ -104,16 +105,20 @@ export default function Home(){
         </div>
       </div>
       <SearchBar/>
+      <Link to='/create'><button>Create new activity</button></Link>
+      
       <div>
         <div className="cards-container">  
           {
             currentCountries?.map( (country) => 
+            <Link to={'/home/' + country.id}>
               <Country 
                 key={country.id}
                 name = {country.name} 
                 image= {country.image} 
                 continents= {country.continents}
               />
+            </Link>
             )
           }
         </div>

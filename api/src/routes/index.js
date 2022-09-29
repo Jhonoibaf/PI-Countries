@@ -120,16 +120,14 @@ router.get('/countries/:id', async(req, res) => {
 
 router.post('/activities', async (req, res) => {
   try {  
-    const {activity, difficulty, time, season, countries} = req.body;
+    const {name, difficulty, time, season, countries} = req.body;
     const currentActivity = await Activity.create({
-      name: activity,
-      difficulty: difficulty,
-      time: time,
-      season: season
+      name,
+      difficulty,
+      time,
+      season
     });
     
-    console.log(countries);
-
     for(const country of countries){
       console.log(country)
       let countryDB = await Country.findAll({
@@ -138,7 +136,8 @@ router.post('/activities', async (req, res) => {
       currentActivity.addCountry(countryDB)
     }
     res.send('Activity has created')
-  } catch{
+  } catch(error){
+    console.error(error.message)
     res.status(400).send('no se pudo crear la actividad')
   }
 });
