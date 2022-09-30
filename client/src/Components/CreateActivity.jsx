@@ -1,7 +1,5 @@
 import React from "react";
-
-
-import { postActivity, getCountries } from '../Actions';
+import { postActivity, getCountries, getActivities } from '../Actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { Link, useHistory } from "react-router-dom";
@@ -10,7 +8,10 @@ function validate(input) {
   let errors = {}
 
   if (!input.name || input.name.length === 0) errors.name = 'Name is Require '
+  if (!input.difficulty || input.difficulty.length === 0) errors.difficulty = 'Select difficulty is Require '
   if (!input.season || input.season.length === 0) errors.season = 'Season is Require'
+  if (!input.time || input.time.length === 0) errors.time = 'Time is Require'
+  if (!input.typeOfTime || input.typeOfTime.length === 0) errors.typeOfTime = 'Select Hours or Days is Require'
   if (input.countries.length < 1) errors.countries = 'selctec almost one Country'
   return errors
 }
@@ -55,6 +56,13 @@ export default function CreateActivity() {
     })
   }
 
+  function handleDelete(el){
+    setInput({
+      ...input,
+      countries: input.countries.filter(country => country !== el)
+  })
+  }
+
   function handleSubmmit(e) {
     e.preventDefault();
     const currentErrors = validate(input)
@@ -72,6 +80,7 @@ export default function CreateActivity() {
       season: input.season,
       countries: input.countries
     }))
+    dispatch(getActivities())
     alert('Created activity!!')
     setInput({
       name: "",
@@ -80,7 +89,7 @@ export default function CreateActivity() {
       season: "",
       countries: []
     })
-    history.push('/home')
+    //history.push('/home')
   }
 
   return (
@@ -114,6 +123,11 @@ export default function CreateActivity() {
               <option value='4'>4</option>
               <option value='5'>5</option>
             </select>
+            {
+              errors.difficulty && (
+                <p>{errors.difficulty}</p>
+              )
+            }
           </div>
           <div>
             <input
@@ -124,21 +138,36 @@ export default function CreateActivity() {
               name='time'
               value={input.time}
               onChange={(e) => hadleChange(e)} />
+            {
+              errors.time && (
+                <p>{errors.time}</p>
+              )
+            }
             <select name='typeOfTime' onChange={(e) => hadleChange(e)}>
-              <option defaultValue disabled>Select type of time</option>
+              <option selected disabled>Select type of time</option>
               <option value='Hours'>Hours</option>
               <option value='Days'>Days</option>
             </select>
+            {
+              errors.typeOfTime && (
+                <p>{errors.typeOfTime}</p>
+              )
+            }
           </div>
           <div>
             <label>Season</label>
             <select name="season" onChange={(e) => hadleChange(e)}>
-              <option defaultValue disabled >Selecciona una estación</option>
+              <option selected disabled >Selecciona una estación</option>
               <option value='Verano'>Verano</option>
               <option value='Otoño'>Otoño</option>
               <option value='Invierno'>Invierno</option>
               <option value='Primavera'>Primavera</option>
             </select>
+            {
+              errors.season && (
+                <p>{errors.season}</p>
+              )
+            }
           </div>
           <div>
             <select onChange={(e) => hadleSelectCountry(e)} >
@@ -148,7 +177,20 @@ export default function CreateActivity() {
                 ))
               }
             </select>
+            {
+              errors.countries && (
+                <p>{errors.countries}</p>
+              )
+            }
           </div>
+          {
+                input.countries.map(country=>
+                    <div>
+                        <p>{country}</p>
+                        <button onClick={()=>handleDelete(country)}>X</button>
+                    </div>
+                        )
+            }
           <button type='submit' >Done</button>
         </form>
 
