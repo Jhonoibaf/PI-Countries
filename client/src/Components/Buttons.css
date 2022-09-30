@@ -1,0 +1,46 @@
+.buttonHomeLanding {
+    transition-duration: 0.4s;
+    color: #000000;
+    background-color: #f59c2d;
+    border-radius: 15px;
+    width: 10%;
+    height: 10%;
+    border: none;
+    cursor: pointer;
+}
+
+.buttonHomeLanding:hover {
+    color: #ffff;
+    background-color: #000000;
+}
+
+.buttonHomeForm {
+    transition-duration: 0.4s;
+    color: #000000;
+    background-color: #f59c2d;
+    border-radius: 15px;
+    cursor: pointer;
+    border: none;
+    height: 25px;
+}
+
+.buttonHomeForm:hover {
+    color: #ffff;
+    background-color: #000000;
+}
+
+.searchbarButton {
+    transition-duration: 0.4s;
+    color: #000000;
+    background-color: #f59c2d;
+    border-radius: 15px;
+    border: none;
+    width: 30%;
+    cursor: pointer;
+}
+
+.searchbarButton:hover {
+    color: #ffff;
+    background-color: #000000;
+}
+

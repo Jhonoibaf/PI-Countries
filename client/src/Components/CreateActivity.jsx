@@ -1,18 +1,21 @@
 import React from "react";
 import { postActivity, getCountries, getActivities } from '../Actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useHistory } from "react-router-dom";
+import './createActivity.css'
+import './Buttons.css'
 
 function validate(input) {
   let errors = {}
 
+  console.log(input)
   if (!input.name || input.name.length === 0) errors.name = 'Name is Require '
   if (!input.difficulty || input.difficulty.length === 0) errors.difficulty = 'Select difficulty is Require '
   if (!input.season || input.season.length === 0) errors.season = 'Season is Require'
   if (!input.time || input.time.length === 0) errors.time = 'Time is Require'
   if (!input.typeOfTime || input.typeOfTime.length === 0) errors.typeOfTime = 'Select Hours or Days is Require'
-  if (input.countries.length < 1) errors.countries = 'selctec almost one Country'
+  if (input.countries.length === 0) errors.countries = 'select almost one Country'
   return errors
 }
 
@@ -49,21 +52,26 @@ export default function CreateActivity() {
     }))
   }
 
-  function hadleSelectCountry(e) {
+  function handleSelectCountry(e) {
     setInput({
       ...input,
       countries: [...input.countries, e.target.value]
     })
+    console.log('llegue aqui')
+    setErrors(validate({
+      ...input,
+      countries: [...input.countries, e.target.value]
+    }))
   }
 
-  function handleDelete(el){
+  function handleDelete(el) {
     setInput({
       ...input,
       countries: input.countries.filter(country => country !== el)
-  })
+    })
   }
 
-  function handleSubmmit(e) {
+  async function handleSubmmit(e) {
     e.preventDefault();
     const currentErrors = validate(input)
     setErrors(currentErrors)
@@ -80,7 +88,7 @@ export default function CreateActivity() {
       season: input.season,
       countries: input.countries
     }))
-    dispatch(getActivities())
+    await dispatch(getActivities())
     alert('Created activity!!')
     setInput({
       name: "",
@@ -89,111 +97,118 @@ export default function CreateActivity() {
       season: "",
       countries: []
     })
-    //history.push('/home')
+    history.push('/home')
   }
 
   return (
-    <div>
-      <Link to='/home'><button>Back Home</button></Link>
-      <div>
-        <h1>Create new activity</h1>
-        <form onSubmit={(e) => handleSubmmit(e)}>
-          <div>
-            <label></label>
-            <input
-              placeholder="Activity name"
-              type="text"
-              size='60'
-              maxLength='40'
-              name='name'
-              value={input.name}
-              onChange={(e) => hadleChange(e)} />
-            {
-              errors.name && (
-                <p>{errors.name}</p>
-              )
-            }
-          </div>
-          <div>
-            <label>Dificulty</label>
-            <select name="difficulty" onChange={(e) => hadleChange(e)}>
-              <option value='1'>1</option>
-              <option value='2'>2</option>
-              <option value='3'>3</option>
-              <option value='4'>4</option>
-              <option value='5'>5</option>
-            </select>
-            {
-              errors.difficulty && (
-                <p>{errors.difficulty}</p>
-              )
-            }
-          </div>
-          <div>
-            <input
-              placeholder="Time"
-              type="number"
-              min='1'
-              max='99'
-              name='time'
-              value={input.time}
-              onChange={(e) => hadleChange(e)} />
-            {
-              errors.time && (
-                <p>{errors.time}</p>
-              )
-            }
-            <select name='typeOfTime' onChange={(e) => hadleChange(e)}>
-              <option selected disabled>Select type of time</option>
-              <option value='Hours'>Hours</option>
-              <option value='Days'>Days</option>
-            </select>
-            {
-              errors.typeOfTime && (
-                <p>{errors.typeOfTime}</p>
-              )
-            }
-          </div>
-          <div>
-            <label>Season</label>
-            <select name="season" onChange={(e) => hadleChange(e)}>
-              <option selected disabled >Selecciona una estación</option>
-              <option value='Verano'>Verano</option>
-              <option value='Otoño'>Otoño</option>
-              <option value='Invierno'>Invierno</option>
-              <option value='Primavera'>Primavera</option>
-            </select>
-            {
-              errors.season && (
-                <p>{errors.season}</p>
-              )
-            }
-          </div>
-          <div>
-            <select onChange={(e) => hadleSelectCountry(e)} >
-              {
-                countries.map((country) => (
-                  <option value={country.name}>{country.name}</option>
-                ))
-              }
-            </select>
-            {
-              errors.countries && (
-                <p>{errors.countries}</p>
-              )
-            }
-          </div>
-          {
-                input.countries.map(country=>
-                    <div>
-                        <p>{country}</p>
-                        <button onClick={()=>handleDelete(country)}>X</button>
-                    </div>
-                        )
-            }
-          <button type='submit' >Done</button>
-        </form>
+    <div className="backgroundForm">
 
+      <div className="form">
+        <Link to='/home' >
+          <button className="buttonHomeForm">Back Home</button>
+        </Link>
+        <div>
+          <h1>Create new activity</h1>
+          <form onSubmit={(e) => handleSubmmit(e)}>
+            <div className="options">
+              <input
+                placeholder="Activity name"
+                type="text"
+                size='60'
+                maxLength='40'
+                name='name'
+                value={input.name}
+                onChange={(e) => hadleChange(e)} />
+              {
+                errors.name && (
+                  <div className="errors">{errors.name}</div>
+                )
+              }
+            </div>
+            <div className="options">
+              <label>Dificulty  </label>
+              <select name="difficulty" onChange={(e) => hadleChange(e)}>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+                <option value='4'>4</option>
+                <option value='5'>5</option>
+              </select>
+              {
+                errors.difficulty && (
+                  <div className="errors">{errors.difficulty}</div>
+                )
+              }
+            </div>
+            <div className="options">
+              <input
+                className="input"
+                placeholder="Time"
+                type="number"
+                min='1'
+                max='99'
+                name='time'
+                value={input.time}
+                onChange={(e) => hadleChange(e)} />
+              {
+                errors.time && (
+                  <div className="errors">{errors.time}</div>
+                )
+              }
+              <select name='typeOfTime' onChange={(e) => hadleChange(e)}>
+                <option selected disabled>Select type of time</option>
+                <option value='Hours'>Hours</option>
+                <option value='Days'>Days</option>
+              </select>
+              {
+                errors.typeOfTime && (
+                  <div className="errors">{errors.typeOfTime}</div>
+                )
+              }
+            </div>
+            <div className="options">
+              <label>Season  </label>
+              <select name="season" onChange={(e) => hadleChange(e)}>
+                <option selected disabled >select season</option>
+                <option value='Verano'>Verano</option>
+                <option value='Otoño'>Otoño</option>
+                <option value='Invierno'>Invierno</option>
+                <option value='Primavera'>Primavera</option>
+              </select>
+              {
+                errors.season && (
+                  <div className="errors">{errors.season}</div>
+                )
+              }
+            </div>
+            <div className="options">
+              <select onChange={(e) => handleSelectCountry(e)} >
+                {
+                  countries.map((country) => (
+                    <option value={country.name}>{country.name}</option>
+                  ))
+                }
+              </select>
+              {
+                errors.countries && (
+                  <div className="errors">{errors.countries}</div>
+                )
+              }
+            </div>
+            {
+              input.countries.map(country =>
+                <div className="containerContrySelect">
+                  <div className="selectedCountry">
+                    <div>{country}</div>
+                    <button  className="deleteButton" onClick={() => handleDelete(country)}>X</button>
+                  </div>
+                </div>
+              )
+            }
+            <button type='submit' className="doneButton" >Done</button>
+          </form>
+
+        </div>
       </div>
     </div>
   )

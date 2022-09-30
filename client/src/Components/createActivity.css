@@ -1,0 +1,75 @@
+div.backgroundForm{    
+  background-color: #13172c;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+div.form{
+  background-color: #ffff;
+  margin: 80px;
+  margin-left: 30%;
+  margin-right: 30%;
+  border-radius: 25px;
+  height: 60%;
+  align-content: center;
+  padding: 95px 35px 30px 30px;
+}
+
+div.options {
+  padding-top: 7px;
+  padding-left: 3px;
+}
+
+.doneButton {
+  transition-duration: 0.4s;
+  color: #000000;
+  background-color: #f59c2d;
+  border-radius: 15px;
+  width: 15%;
+  padding: 5px;
+  margin-top: 15px;
+  border: none;
+  cursor: pointer;
+}
+
+.doneButton:hover {
+  color: #ffff;
+  background-color: #000000;
+}
+
+.deleteButton {
+  transition-duration: 0.4s;
+  color:#f59c2d;
+  background-color:  #000000;
+  border-radius: 15px;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  color:  #000000;
+  background-color: #ffff;
+}
+.selectedCountry {
+  color: #000000;
+  background-color: #f59c2d;
+  display: flex;
+  border-radius: 10px;
+  padding: 2px;
+}
+.containerContrySelect {
+  display: flex;
+  align-items: center;
+}
+
+.errors {
+  color: red;
+  font-size: 12px;
+}
+.inputTime {
+  width: 100%;
+  border: 2px solid #f59c2d;
+  border-radius: 15px;
+}

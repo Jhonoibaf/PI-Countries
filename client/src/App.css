@@ -3,6 +3,17 @@ a {
   color: #020202;
 }
 
+select {
+  border: 2px solid #f59c2d;
+  border-radius: 15px;
+  width: 55%;
+}
+input {
+  border: 2px solid #f59c2d;
+  border-radius: 15px;
+  width: 60%;
+}
+
 .App {
   text-align: center;
   height: 100%;

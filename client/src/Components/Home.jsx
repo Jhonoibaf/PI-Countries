@@ -27,6 +27,8 @@ export default function Home() {
   const [order, setOrder] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [countriesForPage, setCountriesForPage] = useState(10)
+  const [countries, setCountries] = useState([])
+  const [activities, setActivities] = useState([])
   const countOfLastCountries = currentPage * countriesForPage
   const countOfFirstCountries = countOfLastCountries - countriesForPage
   const currentCountries = allCountries.slice(countOfFirstCountries, countOfLastCountries)
@@ -36,10 +38,14 @@ export default function Home() {
   }
 
   useEffect(() => {
-
-    if (!allCountries || allCountries.length === 0) {
+    if (!countries || countries.length === 0) {
       dispatch(getCountries())
+      setCountries(allCountries)
+    }
+
+    if (!activities || activities.length === 0) {
       dispatch(getActivities())
+      setActivities(allActivities)
     }
   })
 
@@ -73,13 +79,13 @@ export default function Home() {
         <div className="filters">
           <span>Order by</span>
           <div>Name:
-            <select onChange={e => handleSetOrderName(e)} >
+            <select className="selectFilters" onChange={e => handleSetOrderName(e)} >
               <option value='asc'>A - Z</option>
               <option value='des'>Z - A</option>
             </select>
           </div>
           <div>Population:
-            <select onChange={e => handleSetOrderPopulation(e)}  >
+            <select className="selectFilters" onChange={e => handleSetOrderPopulation(e)}  >
               <option value='smallest'>smallest to largest</option>
               <option value='largest'>largest to smallest</option>
             </select>
@@ -89,7 +95,7 @@ export default function Home() {
           <span>Filter by</span>
           <div>
             <samp>Continents</samp>
-            <select onChange={e => handleFilterContinents(e)}>
+            <select className="selectFilters" onChange={e => handleFilterContinents(e)}>
               <option value='All'>All Continents</option>
               <option value='Africa'>Africa</option>
               <option value='Asia'>Asia</option>
@@ -101,7 +107,7 @@ export default function Home() {
           </div>
           <div>
             <span>Activities</span>
-            <select onChange={e => handleFilterActivities(e)}>
+            <select className="selectFilters" onChange={e => handleFilterActivities(e)}>
               <option value='null'>All Activities</option>
               {
                 allActivities.map((activity) => (
@@ -111,7 +117,9 @@ export default function Home() {
             </select>
           </div>
         </div>
-        <Link to='/create'><button>Create new activity</button></Link>
+        <Link to='/create'>
+          <button className="routeCreateButton">Create activity</button>
+        </Link>
       </div>
       <div className="countries">
         <div className="cards-container">

@@ -1,22 +1,39 @@
 .navbar {
-    display: flex;
+    background-color: #13172c;
     width: 20%;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    text-align: justify;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    height: auto;
     position: fixed;
-    padding: 20px;
-    margin: 30px;
+    padding-top: 70px;
 }
 
 .filters {
-    display: flex;
-    width: 100%;
+    display: inline-table;
+    width: 50%;
     height: 100%;
-    flex-direction: column;
-    justify-content: space-around;
-    padding-right: 20px;
+    padding-top: 30px;
+    margin: 20px;
+    color: #ffff;
+}
 
+.routeCreateButton {
+    transition-duration: 0.4s;
+    color: #000000;
+    background-color: #f59c2d;
+    border-radius: 15px;
+    margin-top: 10px;
+    margin-bottom: 200px;
+    padding: 10px;
+    width: 70%;
+    border: none;
+}
+
+.routeCreateButton:hover {
+    color: #ffff;
+    background-color: #000000;
+}
+
+.selectFilters {
+    width: 100%;
+    border: 2px solid #f59c2d;
+    border-radius: 15px;
 }
