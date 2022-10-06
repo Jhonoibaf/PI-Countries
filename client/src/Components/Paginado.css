@@ -12,3 +12,7 @@ li{
 	background: #f59c2d;
 	text-decoration: none;
 }
+li:hover {
+    background-color: #13172c;
+    color: #EEEEEE;
+  }

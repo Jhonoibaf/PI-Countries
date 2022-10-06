@@ -18,8 +18,10 @@ export default function Detail(props) {
   }
 
   useEffect(() => {
+    if (country) return
+
     getDetail()
-  },)
+  })
 
   return country ? (
     <div>

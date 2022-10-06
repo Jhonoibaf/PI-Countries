@@ -24,18 +24,9 @@ export default function Home() {
   const allCountries = useSelector((state) => state.filteredCountries)
   const allActivities = useSelector((state) => state.activities)
 
-  const [order, setOrder] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [countriesForPage, setCountriesForPage] = useState(10)
+  //Estado Local de paises y actividades
   const [countries, setCountries] = useState([])
   const [activities, setActivities] = useState([])
-  const countOfLastCountries = currentPage * countriesForPage
-  const countOfFirstCountries = countOfLastCountries - countriesForPage
-  const currentCountries = allCountries.slice(countOfFirstCountries, countOfLastCountries)
-
-  const paginado = (pageNumber) => {
-    setCurrentPage(pageNumber)
-  }
 
   useEffect(() => {
     if (!countries || countries.length === 0) {
@@ -49,8 +40,39 @@ export default function Home() {
     }
   })
 
+  //Ordenamientos:
+  
+  const [order, setOrder] = useState('')
+
+  function handleSetOrderName(order) {
+    order.preventDefault()
+    dispatch(orderByName(order.target.value))
+    setCurrentCountryPage(1);
+    setOrder(`order ${order.target.value}`)
+  }
+
+  function handleSetOrderPopulation(order) {
+    order.preventDefault()
+    dispatch(orderByPopulation(order.target.value))
+    setCurrentCountryPage(1);
+    setOrder(`order ${order.target.value}`)
+  }
+
+  //Paginado:
+  const [currentCountryPage, setCurrentCountryPage] = useState(1)
+  const [countriesForPage, setCountriesForPage] = useState(10)
+  const countOfLastCountries = currentCountryPage * countriesForPage 
+  const countOfFirstCountries = countOfLastCountries - countriesForPage
+  const currentCountries = allCountries.slice(countOfFirstCountries, countOfLastCountries)
+
+  const paginado = (pageNumber) => {
+    setCurrentCountryPage(pageNumber)
+  }
+
+ 
+  // Filtrados:
+
   function handleFilterContinents(continent) {
-    console.log(continent.target.value);
     dispatch(filterContinents(continent.target.value))
   }
 
@@ -58,24 +80,20 @@ export default function Home() {
     dispatch(filterActivities(activity.target.value))
   }
 
-  function handleSetOrderName(order) {
-    order.preventDefault()
-    dispatch(orderByName(order.target.value))
-    setCurrentPage(1);
-    setOrder(`order ${order.target.value}`)
+  // recargar todos
+
+  function handleClick (e){
+  e.preventDefault();
+  dispatch(getCountries())
   }
 
-  function handleSetOrderPopulation(order) {
-    order.preventDefault()
-    dispatch(orderByPopulation(order.target.value))
-    setCurrentPage(1);
-    setOrder(`order ${order.target.value}`)
-  }
+  
 
   return (
     <div className="home">
       <div className="navbar">
         <SearchBar />
+        <button className="refreshButton" onClick={(e)=>handleClick(e)}>Refresh</button>
         <div className="filters">
           <span>Order by</span>
           <div>Name:

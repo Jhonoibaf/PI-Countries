@@ -6,40 +6,54 @@ import { Link, useHistory } from "react-router-dom";
 import './createActivity.css'
 import './Buttons.css'
 
-function validate(input) {
-  let errors = {}
-
-  console.log(input)
-  if (!input.name || input.name.length === 0) errors.name = 'Name is Require '
-  if (!input.difficulty || input.difficulty.length === 0) errors.difficulty = 'Select difficulty is Require '
-  if (!input.season || input.season.length === 0) errors.season = 'Season is Require'
-  if (!input.time || input.time.length === 0) errors.time = 'Time is Require'
-  if (!input.typeOfTime || input.typeOfTime.length === 0) errors.typeOfTime = 'Select Hours or Days is Require'
-  if (input.countries.length === 0) errors.countries = 'select almost one Country'
-  return errors
-}
 
 export default function CreateActivity() {
 
-  const allCountries = useSelector((state) => state.filteredCountries)
+
   const dispatch = useDispatch()
   const history = useHistory()
   const countries = useSelector((state) => state.countries)
+  const activities = useSelector((state) => state.activities)
   const [input, setInput] = useState({
     name: "",
     difficulty: "",
     time: "",
     typeOfTime: "",
     season: "",
+    temporada: "",
     countries: []
   })
+  console.log(input);
 
   const [errors, setErrors] = useState({})
 
-  if (!allCountries || allCountries.length === 0) {
+  if (!countries || countries.length === 0) {
     dispatch(getCountries())
   }
 
+  if (!activities || activities.length === 0) {
+    dispatch(getActivities())
+  }
+
+  function validate(currentInput) {
+    let errors = {}
+
+    if (!currentInput.name || currentInput.name.length === 0) errors.name = 'Name is Require '
+    if (currentInput.name && currentInput.name.length > 0) {
+      const repeatActivity = activities.find(activity => activity.name === currentInput.name)
+      
+      if (repeatActivity) errors.name = 'Activity name exist in data base, please change the name'
+    }
+    if (!currentInput.difficulty || currentInput.difficulty.length === 0) errors.difficulty = 'Select difficulty is Require '
+    if (!currentInput.season || currentInput.season.length === 0) errors.season = 'Season is Require'
+    if (!currentInput.time || currentInput.time.length === 0) errors.time = 'Time is Require'
+    if (!currentInput.typeOfTime || currentInput.typeOfTime.length === 0) errors.typeOfTime = 'Select Hours or Days is Require'
+    
+   
+    if (currentInput.countries.length === 0) errors.countries = 'select almost one Country'
+
+    return errors
+  }
 
   function hadleChange(e) {
     setInput({
@@ -57,23 +71,25 @@ export default function CreateActivity() {
       ...input,
       countries: [...input.countries, e.target.value]
     })
-    console.log('llegue aqui')
+    
     setErrors(validate({
       ...input,
       countries: [...input.countries, e.target.value]
     }))
   }
 
-  function handleDelete(el) {
+  function handleDelete(e) {
+    e.preventDefault();
     setInput({
       ...input,
-      countries: input.countries.filter(country => country !== el)
+      countries: input.countries.filter(country => country !== e.target.value)
     })
   }
 
   async function handleSubmmit(e) {
     e.preventDefault();
     const currentErrors = validate(input)
+    
     setErrors(currentErrors)
 
     if (Object.keys(errors).length > 0 || Object.keys(currentErrors).length > 0) {
@@ -86,6 +102,7 @@ export default function CreateActivity() {
       difficulty: input.difficulty,
       time: timeAndUnit,
       season: input.season,
+      temporada: input.temporada,
       countries: input.countries
     }))
     await dispatch(getActivities())
@@ -95,6 +112,7 @@ export default function CreateActivity() {
       difficulty: "",
       time: "",
       season: "",
+      temporada: "",
       countries: []
     })
     history.push('/home')
@@ -166,6 +184,16 @@ export default function CreateActivity() {
                 )
               }
             </div>
+
+            <div className="options">
+              <label>Temporada  </label>
+              <select name="temporada" onChange={(e) => hadleChange(e)}>
+                <option selected disabled >select temporada</option>
+                <option value='Alta'>Alta</option>
+                <option value='Media'>Media</option>
+                <option value='Baja'>Baja</option>
+              </select>
+            </div>
             <div className="options">
               <label>Season  </label>
               <select name="season" onChange={(e) => hadleChange(e)}>
@@ -195,16 +223,18 @@ export default function CreateActivity() {
                 )
               }
             </div>
-            {
-              input.countries.map(country =>
-                <div className="containerContrySelect">
+
+            <div className="containerContrySelect">
+              {input.countries.map(country =>
+                <div>
                   <div className="selectedCountry">
                     <div>{country}</div>
-                    <button  className="deleteButton" onClick={() => handleDelete(country)}>X</button>
+                    <button value={country} className="deleteButton" onClick={(e) => handleDelete(e)}>X</button>
                   </div>
                 </div>
-              )
-            }
+              )}
+            </div>
+
             <button type='submit' className="doneButton" >Done</button>
           </form>
 
