@@ -24,9 +24,10 @@ export default function CreateActivity() {
     countries: []
   })
   console.log(input);
-
+ 
   const [errors, setErrors] = useState({})
-
+  console.log(errors);
+ 
   if (!countries || countries.length === 0) {
     dispatch(getCountries())
   }
